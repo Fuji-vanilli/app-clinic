@@ -1,21 +1,18 @@
-package com.cliniquems.patientservice.model;
+package com.cliniquems.patientservice.dto;
 
+import com.cliniquems.patientservice.model.Address;
+import com.cliniquems.patientservice.model.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 
 @Data
 @AllArgsConstructor @NoArgsConstructor
 @Builder
-@Document(collection = "patient")
-public class Patient {
-    @Id
-    private String id;
+public class PatientRequest {
     private String code;
     private String firstname;
     private String lastname;
@@ -23,6 +20,4 @@ public class Patient {
     private Status status;
     private String phoneNumber;
     private Address address;
-    private Date creationDate;
-    private Date lastUpdateDate;
 }

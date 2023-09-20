@@ -1,4 +1,15 @@
+server:
+  port: 3000
+
 spring:
   application:
     name: config-service
 
+  cloud:
+    compatibility-verifier:
+      enabled: true
+
+    config:
+      server:
+        git:
+          uri: https://github.com/Fuji-vanilli/config-clinic-repo.git

@@ -17,7 +17,6 @@ public class PatientRequest {
     private String firstname;
     private String lastname;
     private Date dateOfBirth;
-    private Status status;
     private String phoneNumber;
     private Address address;
 }

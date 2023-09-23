@@ -26,8 +26,8 @@ public class PatientApi implements PatientController{
     }
 
     @Override
-    public ResponseEntity<Response> all() {
-        return ResponseEntity.ok(patientService.all());
+    public ResponseEntity<Response> all(int page, int size) {
+        return ResponseEntity.ok(patientService.all(page, size));
     }
 
     @Override

@@ -11,7 +11,7 @@ public interface PatientController {
     @GetMapping("get/{code}")
     ResponseEntity<Response> get(@PathVariable String code);
     @GetMapping("all")
-    ResponseEntity<Response> all();
+    ResponseEntity<Response> all(int page, int size);
     @DeleteMapping("delete/{code}")
     ResponseEntity<Response> delete(@PathVariable String code);
 }

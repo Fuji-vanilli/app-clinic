@@ -8,6 +8,8 @@ import com.cliniquems.patientservice.repository.PatientRepository;
 import com.cliniquems.patientservice.validator.PatientValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -73,17 +76,66 @@ public class PatientServiceImpl implements PatientService{
 
     @Override
     public Response get(String code) {
-        return null;
+        Optional<Patient> patientOptional= repository.findByCode(code);
+        if(patientOptional.isEmpty()) {
+            log.error("the patient with the code: {} doesn't exist! ", code);
+            return generateResponse(
+                    HttpStatus.BAD_REQUEST,
+                    null,
+                    null,
+                    "the patient with the code: "+code+" doesn't exist on the database"
+            );
+        }
+
+        Patient patient= patientOptional.get();
+        log.info("patient with the code {} getted successfully!", code);
+        return generateResponse(
+                HttpStatus.OK,
+                null,
+                Map.of(
+                        "patient", patientMapper.mapToPatientResponse(patient)
+                ),
+                "patient with the code: "+code+" getted successfully!"
+        );
     }
 
     @Override
-    public Response all() {
-        return null;
+    public Response all(int page, int size) {
+        Pageable pageable= PageRequest.of(page, size);
+        log.info("All patient getted successfully!");
+        return generateResponse(
+                HttpStatus.OK,
+                null,
+                Map.of(
+                        "patients", repository.findAll(pageable).getContent().stream()
+                                .map(patientMapper::mapToPatientResponse)
+                                .toList()
+                ),
+                "all patient getted successfully"
+        );
     }
 
     @Override
     public Response delete(String code) {
-        return null;
+        Optional<Patient> patientOptional= repository.findByCode(code);
+        if(patientOptional.isEmpty()) {
+            log.error("the patient with the code: {} doesn't exist! ", code);
+            return generateResponse(
+                    HttpStatus.BAD_REQUEST,
+                    null,
+                    null,
+                    "the patient with the code: "+code+" doesn't exist on the database"
+            );
+        }
+
+        repository.deleteByCode(code);
+        log.info("patient with the code {} deleted successfully!", code);
+        return generateResponse(
+                HttpStatus.OK,
+                null,
+                null,
+                "patient with the code: "+code+" deleted successfully!"
+        );
     }
 
     private Response generateResponse(HttpStatus status, URI location, Map<?, ?> data, String message){

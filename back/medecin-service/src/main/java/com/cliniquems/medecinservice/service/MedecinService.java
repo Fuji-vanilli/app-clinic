@@ -7,6 +7,6 @@ public interface MedecinService {
     Response add(MedecinRequest request);
     Response get(String code);
     Response update(MedecinRequest request);
-    Response all();
+    Response all(int page, int size);
     Response delete(String code);
 }

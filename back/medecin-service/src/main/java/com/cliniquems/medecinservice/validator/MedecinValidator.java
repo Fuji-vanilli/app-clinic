@@ -19,13 +19,13 @@ public class MedecinValidator {
             errors.add("code required!");
         }
         if(Objects.isNull(request.getSpeciality())){
-            errors.add("address required!");
+            errors.add("speciality required!");
         }
         if(Objects.isNull(request.getPhoneNumber())){
             errors.add("phone number required!");
         }
         if(Objects.isNull(request.getSalary())){
-            errors.add("date of birth required!");
+            errors.add("salary required!");
         }
         return errors;
     }

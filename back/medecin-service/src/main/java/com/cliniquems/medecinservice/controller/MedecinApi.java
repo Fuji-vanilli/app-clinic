@@ -31,8 +31,8 @@ public class MedecinApi implements MedecinController{
     }
 
     @Override
-    public ResponseEntity<Response> all() {
-        return ResponseEntity.ok(medecinService.all());
+    public ResponseEntity<Response> all(int page, int size) {
+        return ResponseEntity.ok(medecinService.all(page, size));
     }
 
     @Override

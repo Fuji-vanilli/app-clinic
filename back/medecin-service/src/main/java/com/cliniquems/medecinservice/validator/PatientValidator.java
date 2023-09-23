@@ -1,15 +1,15 @@
-package com.cliniquems.patientservice.validator;
+package com.cliniquems.medecinservice.validator;
 
 
-import com.cliniquems.patientservice.dto.PatientRequest;
+import com.cliniquems.medecinservice.dto.MedecinRequest;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class PatientValidator {
+public class MedecinValidator {
 
-    public static List<String> validate(PatientRequest request){
+    public static List<String> validate(MedecinRequest request){
         List<String> errors= new ArrayList<>();
 
         if(Objects.isNull(request.getFirstname())){
@@ -18,15 +18,15 @@ public class PatientValidator {
         if(Objects.isNull(request.getCode())){
             errors.add("code required!");
         }
-        if(Objects.isNull(request.getAddress())){
+        if(Objects.isNull(request.getSpeciality())){
             errors.add("address required!");
         }
         if(Objects.isNull(request.getPhoneNumber())){
             errors.add("phone number required!");
-        }/*
-        if(Objects.isNull(request.getDateOfBirth())){
+        }
+        if(Objects.isNull(request.getSalary())){
             errors.add("date of birth required!");
-        }*/
+        }
         return errors;
     }
 }

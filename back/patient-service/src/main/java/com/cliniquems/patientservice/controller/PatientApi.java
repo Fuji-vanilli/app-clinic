@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 import static com.cliniquems.patientservice.Utils.Root.APP_ROOT;
 
 @RestController
@@ -18,6 +20,11 @@ public class PatientApi implements PatientController{
     @Override
     public ResponseEntity<Response> add(PatientRequest request) {
         return ResponseEntity.ok(patientService.add(request));
+    }
+
+    @Override
+    public ResponseEntity<Response> updateStatus(Map<String, String> updateStatus) {
+        return ResponseEntity.ok(patientService.updateStatus(updateStatus));
     }
 
     @Override

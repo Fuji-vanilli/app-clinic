@@ -4,6 +4,7 @@ import com.cliniquems.patientservice.Utils.Response;
 import com.cliniquems.patientservice.dto.PatientMapper;
 import com.cliniquems.patientservice.dto.PatientRequest;
 import com.cliniquems.patientservice.model.Patient;
+import com.cliniquems.patientservice.model.Status;
 import com.cliniquems.patientservice.repository.PatientRepository;
 import com.cliniquems.patientservice.validator.PatientValidator;
 import lombok.RequiredArgsConstructor;
@@ -48,9 +49,7 @@ public class PatientServiceImpl implements PatientService{
             return generateResponse(
                     HttpStatus.BAD_REQUEST,
                     null,
-                    Map.of(
-                            "errors", errors
-                    ),
+                    null,
                     "patient already exist on database"
             );
 
@@ -58,6 +57,10 @@ public class PatientServiceImpl implements PatientService{
         Patient patient= patientMapper.mapToPatient(request);
         patient.setCreationDate(new Date());
         patient.setLastUpdateDate(new Date());
+        patient.setStatus(Status.WAITING);
+
+        repository.save(patient);
+        log.info("new patient added successfully!");
 
         URI location= ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("{code}")
@@ -102,7 +105,7 @@ public class PatientServiceImpl implements PatientService{
     @Override
     public Response all(int page, int size) {
         Pageable pageable= PageRequest.of(page, size);
-        log.info("All patient getted successfully!");
+        log.info("All patient withe {} page and {} size, getted successfully!", page, size);
         return generateResponse(
                 HttpStatus.OK,
                 null,
@@ -111,7 +114,7 @@ public class PatientServiceImpl implements PatientService{
                                 .map(patientMapper::mapToPatientResponse)
                                 .toList()
                 ),
-                "all patient getted successfully"
+                "all patient with the page:"+page+" and size: "+size+" getted successfully"
         );
     }
 
@@ -135,6 +138,34 @@ public class PatientServiceImpl implements PatientService{
                 null,
                 null,
                 "patient with the code: "+code+" deleted successfully!"
+        );
+    }
+
+    @Override
+    public Response updateStatus(Map<String, String> updateStatus) {
+        final String code= updateStatus.get("code");
+        Optional<Patient> patientOptional= repository.findByCode(code);
+        if(patientOptional.isEmpty()){
+            log.error("the patient with the code: {} doesn't exist!", code);
+            return generateResponse(
+                    HttpStatus.BAD_REQUEST,
+                    null,
+                    null,
+                    "the patient with the code: "+code+" doesn't exist!"
+            );
+        }
+        Patient patient= patientOptional.get();
+        patient.setStatus(Status.valueOf(updateStatus.get("status").toUpperCase()));
+
+        repository.save(patient);
+
+        return generateResponse(
+                HttpStatus.OK,
+                null,
+                Map.of(
+                        "patient", patientMapper.mapToPatientResponse(patient)
+                ),
+                "status of the patient with the code: "+code+" updated successfully!"
         );
     }
 

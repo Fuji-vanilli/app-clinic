@@ -4,10 +4,17 @@ import com.cliniquems.userservice.Utils.Response;
 import com.cliniquems.userservice.dto.UserMapper;
 import com.cliniquems.userservice.dto.UserRequest;
 import com.cliniquems.userservice.repository.UserRepository;
+import com.cliniquems.userservice.validator.UserValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.net.URI;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -18,6 +25,18 @@ public class UserServiceImpl implements UserService{
     private final UserMapper userMapper;
     @Override
     public Response add(UserRequest request) {
+        List<String> errors= UserValidator.validate(request);
+        if(!errors.isEmpty()) {
+            log.error("some request field not match");
+            return generateResponse(
+                    HttpStatus.BAD_REQUEST,
+                    null,
+                    Map.of(
+                            "errors", errors
+                    ),
+                    "some request field not valid"
+            );
+        }
 
         return null;
     }
@@ -40,5 +59,15 @@ public class UserServiceImpl implements UserService{
     @Override
     public Response delete(String email) {
         return null;
+    }
+    private Response generateResponse(HttpStatus status, URI location, Map<?, ?> data, String message){
+        return Response.builder()
+                .timeStamp(LocalDateTime.now())
+                .status(status)
+                .statusCode(status.value())
+                .location(location)
+                .data(data)
+                .message(message)
+                .build();
     }
 }

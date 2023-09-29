@@ -3,6 +3,7 @@ package com.cliniquems.userservice.service;
 import com.cliniquems.userservice.Utils.Response;
 import com.cliniquems.userservice.dto.UserMapper;
 import com.cliniquems.userservice.dto.UserRequest;
+import com.cliniquems.userservice.model.User;
 import com.cliniquems.userservice.repository.UserRepository;
 import com.cliniquems.userservice.validator.UserValidator;
 import lombok.RequiredArgsConstructor;
@@ -10,9 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -37,8 +40,35 @@ public class UserServiceImpl implements UserService{
                     "some request field not valid"
             );
         }
+        if(repository.existsByEmail(request.getEmail())) {
+            log.error("user with the email {} already exist on the database", request.getEmail());
+            return generateResponse(
+                    HttpStatus.BAD_REQUEST,
+                    null,
+                    null,
+                    "user with the email: "+request.getEmail()+" already exist on the database"
+            );
+        }
 
-        return null;
+        User user= userMapper.mapToUser(request);
+        log.info("new user added successfully!");
+
+        user.setCreationDate(new Date());
+        user.setLastUpdate(new Date());
+
+        URI location= ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/{code}")
+                .buildAndExpand("api/user/get/",request.getEmail())
+                .toUri();
+
+        return generateResponse(
+                HttpStatus.OK,
+                location,
+                Map.of(
+                        "user", userMapper.mapToUserResponse(user)
+                ),
+                "new user added successfully!"
+        );
     }
 
     @Override

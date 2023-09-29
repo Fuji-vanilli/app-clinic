@@ -76,7 +76,32 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public Response update(UserRequest request) {
-        return null;
+        Optional<User> userOptional= repository.findByEmail(request.getEmail());
+        if(userOptional.isEmpty()) {
+            log.error("user with the email {} doesn't exist on the database",request.getEmail());
+            return generateResponse(
+                    HttpStatus.BAD_REQUEST,
+                    null,
+                    null,
+                    "user with the email: "+request.getEmail()+" doesn't exist on the database"
+            );
+        }
+
+        User user= userOptional.get();
+        user.setUsername(request.getUsername());
+        user.setPassword(request.getPassword());
+
+        repository.save(user);
+
+        log.info("user with the email: {} updated successfully",request.getEmail());
+        return generateResponse(
+                HttpStatus.OK,
+                null,
+                Map.of(
+                        "user", userMapper.mapToUserResponse(user)
+                ),
+                "user with the email: "+user.getEmail()+" updated successfully!"
+        );
     }
 
     @Override
@@ -124,7 +149,26 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public Response delete(String email) {
-        return null;
+        Optional<User> userOptional= repository.findByEmail(email);
+        if(userOptional.isEmpty()) {
+            log.error("user with the email {} doesn't exist on the database",email);
+            return generateResponse(
+                    HttpStatus.BAD_REQUEST,
+                    null,
+                    null,
+                    "user with the email: "+email+" doesn't exist on the database"
+            );
+        }
+
+        repository.deleteByEmail(email);
+        log.info("user with the email: {} deleted successfully!", email);
+
+        return generateResponse(
+                HttpStatus.OK,
+                null,
+                null,
+                "user with the email: "+email+" deleted successfully!"
+        );
     }
     private Response generateResponse(HttpStatus status, URI location, Map<?, ?> data, String message){
         return Response.builder()

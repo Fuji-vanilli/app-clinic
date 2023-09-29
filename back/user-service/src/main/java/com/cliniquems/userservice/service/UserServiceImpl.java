@@ -8,6 +8,8 @@ import com.cliniquems.userservice.repository.UserRepository;
 import com.cliniquems.userservice.validator.UserValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -57,7 +60,7 @@ public class UserServiceImpl implements UserService{
         user.setLastUpdate(new Date());
 
         URI location= ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/{code}")
+                .path("/{email}")
                 .buildAndExpand("api/user/get/",request.getEmail())
                 .toUri();
 
@@ -78,12 +81,45 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public Response get(String email) {
-        return null;
+        Optional<User> userOptional= repository.findByEmail(email);
+        if(userOptional.isEmpty()) {
+            log.error("user with the email {} doesn't exist on the database",email);
+            return generateResponse(
+                    HttpStatus.BAD_REQUEST,
+                    null,
+                    null,
+                    "user with the email: "+email+" doesn't exist on the database"
+            );
+        }
+
+        User user= userOptional.get();
+        log.info("user with the email: {} getted successfully!", email);
+
+        return generateResponse(
+                HttpStatus.OK,
+                null,
+                Map.of(
+                        "user", userMapper.mapToUserResponse(user)
+                ),
+                "user with the email: "+email+" getted successfully!"
+        );
     }
 
     @Override
-    public Response all() {
-        return null;
+    public Response all(int page, int size) {
+        Pageable pageable= PageRequest.of(page, size);
+
+        log.info("all user with the page: {} and size: {} getted successfully", page, size);
+        return generateResponse(
+                HttpStatus.OK,
+                null,
+                Map.of(
+                        "users", repository.findAll(pageable).getContent().stream()
+                                .map(userMapper::mapToUserResponse)
+                                .toList()
+                ),
+                "all user with the page: "+page+" and size: "+size+" getted successfully!"
+        );
     }
 
     @Override

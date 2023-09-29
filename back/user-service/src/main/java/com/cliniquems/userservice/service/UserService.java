@@ -7,6 +7,6 @@ public interface UserService {
     Response add(UserRequest request);
     Response update(UserRequest request);
     Response get(String email);
-    Response all();
+    Response all(int page, int size);
     Response delete(String email);
 }

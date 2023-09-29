@@ -13,7 +13,10 @@ public interface UserController {
     @GetMapping("get/{email}")
     ResponseEntity<Response> get(@PathVariable String email);
     @GetMapping("all")
-    ResponseEntity<Response> all();
+    ResponseEntity<Response> all(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    );
     @DeleteMapping("delete/{email}")
     ResponseEntity<Response> delete(@PathVariable String email);
 }

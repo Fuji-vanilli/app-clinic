@@ -31,8 +31,8 @@ public class UserApi implements UserController{
     }
 
     @Override
-    public ResponseEntity<Response> all() {
-        return ResponseEntity.ok(userService.all());
+    public ResponseEntity<Response> all(int page, int size) {
+        return ResponseEntity.ok(userService.all(page, size));
     }
 
     @Override

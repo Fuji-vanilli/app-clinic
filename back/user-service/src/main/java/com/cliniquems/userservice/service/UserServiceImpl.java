@@ -4,7 +4,7 @@ import com.cliniquems.userservice.Utils.Response;
 import com.cliniquems.userservice.dto.UserMapper;
 import com.cliniquems.userservice.dto.UserRequest;
 import com.cliniquems.userservice.model.User;
-import com.cliniquems.userservice.repository.UserRepository;
+import com.cliniquems.userservice.userservice.repository.UserRepository;
 import com.cliniquems.userservice.validator.UserValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -149,7 +149,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public Response delete(String email) {
-        Optional<User> userOptional= repository.findByEmail(email);
+        repository.findByEmail(email);
         if(userOptional.isEmpty()) {
             log.error("user with the email {} doesn't exist on the database",email);
             return generateResponse(

@@ -4,7 +4,7 @@ import com.cliniquems.userservice.model.User;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class UserMapperImpl implements UserMapper{
+public class UserMapperImplementation implements UserMapper{
     @Override
     public User mapToUser(UserRequest request) {
         return User.builder()

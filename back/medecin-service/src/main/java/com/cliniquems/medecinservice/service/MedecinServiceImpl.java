@@ -145,6 +145,7 @@ public class MedecinServiceImpl implements MedecinService {
                 HttpStatus.OK,
                 null,
                 Map.of(
+                        "contents number", repository.findAll(pageable).getContent().size(),
                         "medecins", repository.findAll(pageable).getContent().stream()
                                 .map(medecinMapper::mapToMedecinResponse)
                                 .toList()

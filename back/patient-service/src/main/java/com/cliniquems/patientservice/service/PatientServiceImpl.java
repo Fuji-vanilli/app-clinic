@@ -110,6 +110,7 @@ public class PatientServiceImpl implements PatientService{
                 HttpStatus.OK,
                 null,
                 Map.of(
+                        "contents number", repository.findAll(pageable).getContent().size(),
                         "patients", repository.findAll(pageable).getContent().stream()
                                 .map(patientMapper::mapToPatientResponse)
                                 .toList()
@@ -155,6 +156,7 @@ public class PatientServiceImpl implements PatientService{
             );
         }
         Patient patient= patientOptional.get();
+        log.info("patient with the code {} patched: {} to {} successfully!", code, patient.getStatus(), Status.valueOf(updateStatus.get("status").toUpperCase()));
         patient.setStatus(Status.valueOf(updateStatus.get("status").toUpperCase()));
 
         repository.save(patient);

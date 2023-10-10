@@ -97,7 +97,7 @@ public class MedecinServiceImpl implements MedecinService {
                 HttpStatus.OK,
                 null,
                 Map.of(
-                        "patient", medecinMapper.mapToMedecinResponse(medecin)
+                        "medecin", medecinMapper.mapToMedecinResponse(medecin)
                 ),
                 "medecin with the code: "+code+" getted successfully!"
         );

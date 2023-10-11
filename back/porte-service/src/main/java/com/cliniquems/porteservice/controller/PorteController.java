@@ -19,6 +19,8 @@ public interface PorteController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size
     );
+    @PostMapping("update")
     ResponseEntity<Response> update(@RequestBody PorteRequest request);
+    @DeleteMapping("delete/{numero}")
     ResponseEntity<Response> delete(@PathVariable String numero);
 }

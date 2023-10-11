@@ -21,10 +21,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.sound.sampled.Port;
 import java.net.URI;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional
@@ -190,9 +187,12 @@ public class PorteServiceImpl implements PorteService {
         }
 
         Porte porte= porteOptional.get();
-        porte.setNumero(request.getNumero());
         porte.setCodeMedecin(request.getCodeMedecin());
         porte.setMedecin(webClient.getMedecin(request.getCodeMedecin()));
+
+        if(!Objects.isNull(request.getSpeciality())) {
+            porte.setSpeciality(request.getSpeciality());
+        }
         porte.setLastUpdate(new Date());
 
         repository.save(porte);

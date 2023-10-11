@@ -77,10 +77,6 @@ public class WebClientGetter {
             JSONObject dataJson= new JSONObject(dataBrute);
             data= dataJson.getJSONObject("data").getJSONObject("patient");
 
-            String dateJson= data.getString("date");
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-            Date date= dateFormat.parse(dateJson);
-
             patient= Patient.builder()
                     .code(data.getString("code"))
                     .status(Status.valueOf(data.getString("status").toUpperCase()))
@@ -90,8 +86,6 @@ public class WebClientGetter {
                     .build();
         } catch (JSONException e) {
             throw new RuntimeException("error to deserialize string to json object!!!!");
-        } catch (ParseException e) {
-            throw new RuntimeException("error to convert date type!!!");
         }
         return patient;
     }

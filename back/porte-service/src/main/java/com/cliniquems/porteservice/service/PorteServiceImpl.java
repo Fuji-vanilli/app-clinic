@@ -158,7 +158,17 @@ public class PorteServiceImpl implements PorteService {
                 Map.of(
                         "content number", repository.findAll(pageable).getContent().size(),
                         "portes", repository.findAll(pageable).getContent().stream()
-                                .map(porteMapper::mapToPorteResponse)
+                                .map(p-> {
+                                    Medecin medecin= webClient.getMedecin(p.getCodeMedecin());
+                                    final List<Patient> patients = p.getCodePatients().stream()
+                                            .map(webClient::getPatient)
+                                            .toList();
+
+                                    p.setMedecin(medecin);
+                                    p.setPatients(patients);
+
+                                    return porteMapper.mapToPorteResponse(p);
+                                })
                 ),
                 "all portes with page: "+page+" and size: "+size+" getted successfully!"
         );

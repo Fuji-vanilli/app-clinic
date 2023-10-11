@@ -10,9 +10,6 @@ import org.json.JSONObject;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -24,7 +21,7 @@ public class WebClientGetter {
 
     public Medecin getMedecin(String code) {
         final CompletableFuture<String> dataFuture = webClient.build().get()
-                .uri("http://localhost:3110/api/medecin/get/" + code)
+                .uri("http://MEDECIN-SERVICE/api/medecin/get/" + code)
                 .retrieve()
                 .bodyToMono(String.class)
                 .toFuture();
@@ -58,7 +55,7 @@ public class WebClientGetter {
 
     public Patient getPatient(String code) {
         final CompletableFuture<String> dataFuture = webClient.build().get()
-                .uri("http://localhost:3100/api/patient/get/" + code)
+                .uri("http://PATIENT-SERVICE/api/patient/get/" + code)
                 .retrieve()
                 .bodyToMono(String.class)
                 .toFuture();

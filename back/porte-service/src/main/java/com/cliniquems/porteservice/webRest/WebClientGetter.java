@@ -87,7 +87,6 @@ public class WebClientGetter {
                     .firstname(data.getString("firstname"))
                     .lastname(data.getString("lastname"))
                     .phoneNumber(data.getString("phoneNumber"))
-                    .dateOfBirth(date)
                     .build();
         } catch (JSONException e) {
             throw new RuntimeException("error to deserialize string to json object!!!!");

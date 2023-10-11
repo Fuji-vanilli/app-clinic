@@ -1,6 +1,7 @@
 package com.cliniquems.porteservice.service;
 
 import com.cliniquems.porteservice.Utils.Response;
+import com.cliniquems.porteservice.dto.Medecin;
 import com.cliniquems.porteservice.dto.Patient;
 import com.cliniquems.porteservice.dto.PorteMapper;
 import com.cliniquems.porteservice.dto.PorteRequest;
@@ -10,6 +11,8 @@ import com.cliniquems.porteservice.validator.PorteValidator;
 import com.cliniquems.porteservice.webRest.WebClientGetter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -112,22 +115,109 @@ public class PorteServiceImpl implements PorteService {
     }
     @Override
     public Response get(String numero) {
-        return null;
+        Optional<Porte> porteOptional= repository.findByNumero(numero);
+        if(porteOptional.isEmpty()) {
+            log.error("the porte with the numero: {} doesn't exist! ", numero);
+            return generateResponse(
+                    HttpStatus.BAD_REQUEST,
+                    null,
+                    null,
+                    "the porte with the code: "+numero+" doesn't exist on the database"
+            );
+        }
+        Porte porte= porteOptional.get();
+        Medecin medecin= webClient.getMedecin(porte.getCodeMedecin());
+
+        final List<Patient> patients = porte.getCodePatients().stream()
+                .map(webClient::getPatient)
+                .toList();
+
+        porte.setMedecin(medecin);
+        porte.setPatients(patients);
+
+        log.info("porte with the porte {} getted successfully!", numero);
+
+        return generateResponse(
+                HttpStatus.OK,
+                null,
+                Map.of(
+                        "porte", porteMapper.mapToPorteResponse(porte)
+                ),
+                "porte with the numero: "+porte+" getted successfully!"
+        );
     }
 
     @Override
     public Response all(int page, int size) {
-        return null;
+        Pageable pageable= PageRequest.of(page, size);
+        log.info("all porte with page {} and size: {} getted successfully!", page, size);
+
+        return generateResponse(
+                HttpStatus.OK,
+                null,
+                Map.of(
+                        "content number", repository.findAll(pageable).getContent().size(),
+                        "portes", repository.findAll(pageable).getContent().stream()
+                                .map(porteMapper::mapToPorteResponse)
+                ),
+                "all portes with page: "+page+" and size: "+size+" getted successfully!"
+        );
     }
 
     @Override
     public Response update(PorteRequest request) {
-        return null;
+        String numero= request.getNumero();
+        final Optional<Porte> porteOptional= repository.findByNumero(numero);
+
+        if(porteOptional.isEmpty()){
+            log.error("porte doesn't exist on database");
+            return generateResponse(
+                    HttpStatus.BAD_REQUEST,
+                    null,
+                    null,
+                    "porte doesn't exist on database"
+            );
+        }
+
+        Porte porte= porteOptional.get();
+        porte.setNumero(request.getNumero());
+        porte.setCodeMedecin(request.getCodeMedecin());
+        porte.setMedecin(webClient.getMedecin(request.getCodeMedecin()));
+        porte.setLastUpdate(new Date());
+
+        repository.save(porte);
+
+        log.info("porte with the numero: "+numero+" updated successfully!");
+        return generateResponse(
+                HttpStatus.OK,
+                null,
+                Map.of(
+                        "porte", porteMapper.mapToPorteResponse(porte)
+                ),
+                "porte with the numero: "+numero+" updated successfully!"
+        );
     }
 
     @Override
     public Response delete(String numero) {
-        return null;
+        if(!repository.existsByNumero(numero)) {
+            log.error("the porte with the numero: {} doesn't exist! ", numero);
+            return generateResponse(
+                    HttpStatus.BAD_REQUEST,
+                    null,
+                    null,
+                    "the porte with the code: "+numero+" doesn't exist on the database"
+            );
+        }
+
+        repository.deleteByNumero(numero);
+        log.info("porte with the numero {} deleted successfully!", numero);
+        return generateResponse(
+                HttpStatus.OK,
+                null,
+                null,
+                "porte with the numero: "+numero+" deleted successfully!"
+        );
     }
     private Response generateResponse(HttpStatus status, URI location, Map<?, ?> data, String message){
         return Response.builder()

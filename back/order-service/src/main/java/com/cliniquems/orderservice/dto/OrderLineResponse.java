@@ -1,12 +1,9 @@
-package com.cliniquems.orderservice.model;
+package com.cliniquems.orderservice.dto;
 
-import com.cliniquems.orderservice.dto.Medicament;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -14,13 +11,9 @@ import java.util.List;
 @Data
 @AllArgsConstructor @NoArgsConstructor
 @Builder
-@Document(value = "orderLine")
-public class OrderLine {
-    @Id
-    private String id;
+public class OrderLineResponse {
     private String code;
     private List<String> codeMedicaments;
     private List<Medicament> medicaments;
     private BigDecimal totalPrice;
 }
-

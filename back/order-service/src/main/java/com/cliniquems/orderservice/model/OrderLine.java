@@ -19,8 +19,9 @@ public class OrderLine {
     @Id
     private String id;
     private String code;
-    private List<String> codeMedicaments;
-    private List<Medicament> medicaments;
+    private String codeMedicament;
+    private Medicament medicament;
     private BigDecimal totalPrice;
+    private BigDecimal quantity;
 }
 

@@ -13,7 +13,8 @@ import java.util.List;
 @Builder
 public class OrderLineResponse {
     private String code;
-    private List<String> codeMedicaments;
-    private List<Medicament> medicaments;
+    private String codeMedicament;
+    private Medicament medicament;
+    private BigDecimal quantity;
     private BigDecimal totalPrice;
 }

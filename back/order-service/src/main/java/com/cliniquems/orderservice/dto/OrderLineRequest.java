@@ -5,12 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor @NoArgsConstructor
 @Builder
 public class OrderLineRequest {
     private String code;
-    private List<String> codeMedicaments;
+    private String codeMedicament;
+    private BigDecimal quantity;
 }

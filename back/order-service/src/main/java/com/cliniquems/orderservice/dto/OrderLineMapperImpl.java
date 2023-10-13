@@ -9,17 +9,18 @@ public class OrderLineMapperImpl implements OrderLineMapper{
     public OrderLine mapToOrderLine(OrderLineRequest request) {
         return OrderLine.builder()
                 .code(request.getCode())
-                .codeMedicaments(request.getCodeMedicaments())
+                .codeMedicament(request.getCodeMedicament())
+                .quantity(request.getQuantity())
                 .build();
     }
-
     @Override
     public OrderLineResponse mapToOrderLineResponse(OrderLine orderLine) {
         return OrderLineResponse.builder()
                 .code(orderLine.getCode())
-                .codeMedicaments(orderLine.getCodeMedicaments())
-                .medicaments(orderLine.getMedicaments())
+                .codeMedicament(orderLine.getCodeMedicament())
+                .medicament(orderLine.getMedicament())
                 .totalPrice(orderLine.getTotalPrice())
+                .quantity(orderLine.getQuantity())
                 .build();
     }
 }

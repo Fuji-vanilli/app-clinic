@@ -74,10 +74,7 @@ public class MedecinServiceImpl implements MedecinService {
                 ),
                 "new medecin added successfully!"
         );
-
-
     }
-
     @Override
     public Response get(String code) {
         Optional<Medecin> medecinOptional= repository.findByCode(code);

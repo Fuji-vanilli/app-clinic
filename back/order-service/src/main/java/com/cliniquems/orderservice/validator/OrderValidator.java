@@ -1,6 +1,7 @@
 package com.cliniquems.orderservice.validator;
 
 import com.cliniquems.orderservice.dto.OrderLineRequest;
+import com.cliniquems.orderservice.dto.OrderRequest;
 import com.cliniquems.orderservice.model.Order;
 
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class OrderValidator {
-    public static List<String> validate(Order request){
+    public static List<String> validate(OrderRequest request){
         List<String> errors= new ArrayList<>();
 
         if(Objects.isNull(request.getCode())){

@@ -15,7 +15,7 @@ public class OrderLineValidator {
         if(Objects.isNull(request.getCode())){
             errors.add("code required!!!");
         }
-        if(Objects.isNull(request.getCodeMedicaments())){
+        if(Objects.isNull(request.getCodeMedicament())){
             errors.add("code medicaments required!");
         }
         return errors;

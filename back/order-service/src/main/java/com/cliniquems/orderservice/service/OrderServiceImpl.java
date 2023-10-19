@@ -12,6 +12,8 @@ import com.cliniquems.orderservice.validator.OrderLineValidator;
 import com.cliniquems.orderservice.validator.OrderValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,12 +91,50 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public Response get(String code) {
-        return null;
+        Optional<Order> orderOptional= repository.findByCode(code);
+        if(orderOptional.isEmpty()) {
+            log.error("the order line with the code: {} doesn't exist! ", code);
+            return generateResponse(
+                    HttpStatus.BAD_REQUEST,
+                    null,
+                    null,
+                    "the order line with the code: "+code+" doesn't exist on the database"
+            );
+        }
+        Order order= orderOptional.get();
+        final List<OrderLine> orderLines = order.getCodeOrderLines().stream()
+                .map(c -> {
+                    Optional<OrderLine> orderLine= orderLineRepository.findByCode(code);
+                    return orderLine.get();
+                })
+                .toList();
+
+        order.setOrderLines(orderLines);
+        log.info("order with the code: {} getted successfully", code);
+        return generateResponse(
+                HttpStatus.OK,
+                null,
+                Map.of(
+                        "order", orderMapper.mapToOrderResponse(order)
+                ),
+                "order with the code: "+code+" getted successfully!"
+        );
     }
 
     @Override
     public Response all(int page, int size) {
-        return null;
+        Pageable pageable= PageRequest.of(page, size);
+
+        log.info("all order with the page: {} and size: {} getted successfully", page, size);
+        return generateResponse(
+                HttpStatus.OK,
+                null,
+                Map.of(
+                        "orders", repository.findAll(pageable).getContent().stream()
+                                .map(orderMapper::mapToOrderResponse)
+                ),
+                "all order with the page: "+page+" and size: "+size+" getted successfully!"
+        );
     }
 
     @Override

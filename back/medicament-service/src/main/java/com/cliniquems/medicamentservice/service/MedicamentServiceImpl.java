@@ -1,10 +1,10 @@
 package com.cliniquems.medicamentservice.service;
 
-import com.cliniquems.medicamentservice.MedicamentRepository;
 import com.cliniquems.medicamentservice.Utils.Response;
 import com.cliniquems.medicamentservice.dto.MedicamentMapper;
 import com.cliniquems.medicamentservice.dto.MedicamentRequest;
 import com.cliniquems.medicamentservice.model.Medicament;
+import com.cliniquems.medicamentservice.repository.MedicamentRepository;
 import com.cliniquems.medicamentservice.validator.MedicamentValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -149,7 +149,7 @@ public class MedicamentServiceImpl implements MedicamentService{
 
     @Override
     public Response delete(String code) {
-        if(repository.existsByCode(code)) {
+        if(!repository.existsByCode(code)) {
             log.error("the medicament with the code: {} doesn't exist! ", code);
             return generateResponse(
                     HttpStatus.BAD_REQUEST,

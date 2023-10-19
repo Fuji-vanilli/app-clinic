@@ -18,5 +18,5 @@ public interface MedicamentController {
             @RequestParam(defaultValue = "5") int size
     );
     @DeleteMapping("delete/{code}")
-    ResponseEntity<Response> delete(String code);
+    ResponseEntity<Response> delete(@PathVariable String code);
 }

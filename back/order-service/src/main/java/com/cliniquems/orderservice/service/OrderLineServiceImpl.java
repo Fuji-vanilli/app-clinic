@@ -120,6 +120,7 @@ public class OrderLineServiceImpl implements OrderLineService{
                 HttpStatus.OK,
                 null,
                 Map.of(
+                        "numberElement", repository.findAll(pageable).getContent().size(),
                         "orderLines", repository.findAll(pageable).getContent().stream()
                                 .map(orderLine -> {
                                     Medicament medicament= webClient.getMedicament(orderLine.getCodeMedicament());

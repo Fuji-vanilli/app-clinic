@@ -14,7 +14,6 @@ import java.util.List;
 @AllArgsConstructor @NoArgsConstructor
 @Builder
 public class OrderResponse {
-    private String id;
     private String code;
     private List<String> codeOrderLines;
     private List<OrderLine> orderLines;

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.time.LocalDateTime;
@@ -35,6 +36,7 @@ public class OrderServiceImpl implements OrderService{
     private final OrderRepository repository;
     private final OrderLineRepository orderLineRepository;
     private final OrderMapper orderMapper;
+    private final GenerateReport generateReport;
     @Override
     public Response add(OrderRequest request) {
         List<String> errors= OrderValidator.validate(request);
@@ -73,6 +75,13 @@ public class OrderServiceImpl implements OrderService{
         order.setOrderLines(orderLines);
         order.setTotalPrice(totalPrice);
 
+        repository.save(order);
+        try {
+            generateReport.generate(order);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("error to generate report");
+        }
+
         URI location= ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/{code}")
                 .buildAndExpand("api/order/get/"+order.getCode())
@@ -93,20 +102,17 @@ public class OrderServiceImpl implements OrderService{
     public Response get(String code) {
         Optional<Order> orderOptional= repository.findByCode(code);
         if(orderOptional.isEmpty()) {
-            log.error("the order line with the code: {} doesn't exist! ", code);
+            log.error("the order with the code: {} doesn't exist! ", code);
             return generateResponse(
                     HttpStatus.BAD_REQUEST,
                     null,
                     null,
-                    "the order line with the code: "+code+" doesn't exist on the database"
+                    "the order with the code: "+code+" doesn't exist on the database"
             );
         }
         Order order= orderOptional.get();
         final List<OrderLine> orderLines = order.getCodeOrderLines().stream()
-                .map(c -> {
-                    Optional<OrderLine> orderLine= orderLineRepository.findByCode(code);
-                    return orderLine.get();
-                })
+                .map(c -> orderLineRepository.findByCode(c).orElse(null))
                 .toList();
 
         order.setOrderLines(orderLines);

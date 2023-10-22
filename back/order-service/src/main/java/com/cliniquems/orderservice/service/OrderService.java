@@ -3,6 +3,8 @@ package com.cliniquems.orderservice.service;
 import com.cliniquems.orderservice.Utils.Response;
 import com.cliniquems.orderservice.dto.OrderRequest;
 
+import java.io.FileNotFoundException;
+
 public interface OrderService {
     Response add(OrderRequest request);
     Response get(String code);

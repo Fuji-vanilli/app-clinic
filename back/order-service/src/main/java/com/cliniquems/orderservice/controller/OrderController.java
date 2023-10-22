@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 public interface OrderController {
     @PostMapping("add")
-    ResponseEntity<Response> add(@RequestBody OrderRequest request);
+    ResponseEntity<Response> add(@RequestBody OrderRequest request) ;
     @GetMapping("get/{code}")
     ResponseEntity<Response> get(@PathVariable String code);
     @GetMapping("all")

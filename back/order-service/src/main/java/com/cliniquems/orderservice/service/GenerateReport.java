@@ -28,7 +28,7 @@ public class GenerateReport {
 
 
         Table headerTable= new Table(twoColWidth);
-        headerTable.addCell(new Cell().add(new Paragraph("FJ-Clinic")).setBold().setFontSize(15f).setBorder(Border.NO_BORDER));
+        headerTable.addCell(new Cell().add(new Paragraph("FJ- Clinic")).setBold().setFontSize(15f).setBorder(Border.NO_BORDER));
 
         document.add(headerTable);
 
